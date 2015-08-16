@@ -8,7 +8,7 @@ import java.util.*;
 
 public class CompletionBuilder {
     public static CompletionBuilder CURRENT;
-    private Set<String> imports = new LinkedHashSet<String>(){{
+    private Set<String> imports = new LinkedHashSet<String>() {{
         add("java.lang");
         add("java.util");
         add("java.io");
@@ -33,9 +33,9 @@ public class CompletionBuilder {
         add("org.gjt.sp.jedit.syntax");
     }};
 
-    private Map<String, Class<?>> varToTypeCache = new HashMap<String, Class<?>>(){{
+    private Map<String, Class<?>> varToTypeCache = new HashMap<String, Class<?>>() {{
         try {
-            put("buffer", Class.forName("org.gjt.sp.jedit.Buffer") );
+            put("buffer", Class.forName("org.gjt.sp.jedit.Buffer"));
             put("view", Class.forName("org.gjt.sp.jedit.View"));
             put("editPane", Class.forName("org.gjt.sp.jedit.EditPane"));
             put("textArea", Class.forName("org.gjt.sp.jedit.textarea.JEditTextArea"));
@@ -49,7 +49,7 @@ public class CompletionBuilder {
 
     }};
 
-    private Map<String, List<String>> completionCache = new HashMap<String, List<String>>(){{
+    private Map<String, List<String>> completionCache = new HashMap<String, List<String>>() {{
         try {
             put("jEdit", buildStaticCompletions(Class.forName("org.gjt.sp.jedit.jEdit")));
         } catch (Exception e) {
@@ -102,7 +102,7 @@ this.callstack - An array of bsh.NameSpace references representing the "call sta
     }
 
     private Class primitiveType(String type) {
-        switch(type) {
+        switch (type) {
             case "int":
                 return int.class;
             case "boolean":
@@ -128,7 +128,7 @@ this.callstack - An array of bsh.NameSpace references representing the "call sta
             // if this succeeds either we where given a fully qualified type
             fullType = Class.forName(type);
         } catch (ClassNotFoundException cnfe) {
-            if ( Character.isLowerCase( type.charAt(0)) ) {
+            if (Character.isLowerCase(type.charAt(0))) {
                 fullType = primitiveType(type);
             } else { // unqualified type resolve with imports
                 for (String imp : imports) {
@@ -168,7 +168,7 @@ this.callstack - An array of bsh.NameSpace references representing the "call sta
 
         type = resolveType(baseType);
 
-        if ( isArray ) {
+        if (isArray) {
             Object arrayInstance = Array.newInstance(type, 1);
             type = arrayInstance.getClass();
         }
@@ -179,12 +179,12 @@ this.callstack - An array of bsh.NameSpace references representing the "call sta
 
     private List<String> buildInstanceCompletions(Class<?> type) {
         Set<String> uniqueCompletions = new HashSet<>();
-        for( Method method : type.getMethods() ) {
-            uniqueCompletions.add( buildMethodCompletion(method));
+        for (Method method : type.getMethods()) {
+            uniqueCompletions.add(buildMethodCompletion(method));
         }
 
-        for(Field field : type.getFields() ) {
-            uniqueCompletions.add( field.getName() );
+        for (Field field : type.getFields()) {
+            uniqueCompletions.add(field.getName());
         }
         ArrayList<String> completions = new ArrayList<>(uniqueCompletions);
         Collections.sort(completions);
@@ -199,14 +199,14 @@ this.callstack - An array of bsh.NameSpace references representing the "call sta
 
     private static List<String> buildStaticCompletions(Class<?> type) {
         Set<String> uniqueCompletions = new HashSet<>();
-        for( Method method : type.getMethods() ) {
-            if (Modifier.isStatic( method.getModifiers() ))
-                uniqueCompletions.add( buildMethodCompletion(method) );
+        for (Method method : type.getMethods()) {
+            if (Modifier.isStatic(method.getModifiers()))
+                uniqueCompletions.add(buildMethodCompletion(method));
         }
 
-        for(Field field : type.getFields() ) {
-            if ( Modifier.isStatic( field.getModifiers() ) )
-                uniqueCompletions.add( field.getName() );
+        for (Field field : type.getFields()) {
+            if (Modifier.isStatic(field.getModifiers()))
+                uniqueCompletions.add(field.getName());
         }
         ArrayList<String> completions = new ArrayList<>(uniqueCompletions);
         Collections.sort(completions);
@@ -214,13 +214,11 @@ this.callstack - An array of bsh.NameSpace references representing the "call sta
     }
 
 
-
-
     public List<String> build(String identifierBeforeDot) {
         List<String> completions = completionCache.get(identifierBeforeDot);
         if (completions != null)
             return completions;
-        if ( Character.isUpperCase(identifierBeforeDot.charAt(0)) ) { // static completion
+        if (Character.isUpperCase(identifierBeforeDot.charAt(0))) { // static completion
             completions = buildStaticCompletions(resolveType(identifierBeforeDot));
             completionCache.put(identifierBeforeDot, completions);
         } else { // instance completion
@@ -228,13 +226,15 @@ this.callstack - An array of bsh.NameSpace references representing the "call sta
             if (type == null || type.isPrimitive()) {
                 return Collections.EMPTY_LIST;
             } else if (type.isArray()) { // array completion
-            /*
-             optimized array lookup all arrays support same methods
-             so store in completion cache as array
-              */
+                /*
+                 optimized array lookup all arrays support same methods
+                 so store in completion cache as array
+                  */
                 completions = completionCache.get("array");
                 if (completions == null) {
                     completions = buildInstanceCompletions(type);
+                    completions.add("length");
+                    Collections.sort(completions);
                     completionCache.put("array", completions);
                 }
             } else { // object completion

@@ -1,0 +1,5 @@
+<SERVICES>
+	<SERVICE CLASS="sidekick.SideKickParser" NAME="beanshell">
+		new beanshellsidekick.BeanShellSideKickParser();
+	</SERVICE>
+</SERVICES>

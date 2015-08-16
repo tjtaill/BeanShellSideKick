@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="ErrorList">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/AppData/Roaming/jEdit/jars/ErrorList.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

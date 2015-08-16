@@ -1,0 +1,18 @@
+plugin.beanshellsidekick.BeanShellSidekickPlugin.activate=defer
+plugin.beanshellsidekick.BeanShellSidekickPlugin.author=troy
+plugin.beanshellsidekick.BeanShellSidekickPlugin.description=Bean Shell Sidkick Plugin Providing autocomplete
+plugin.beanshellsidekick.BeanShellSidekickPlugin.docs=docs/BeanShellSidekick.html
+plugin.beanshellsidekick.BeanShellSidekickPlugin.longdescription=description.html
+plugin.beanshellsidekick.BeanShellSidekickPlugin.name=BeanShellSidekick
+plugin.beanshellsidekick.BeanShellSidekickPlugin.usePluginHome=true
+
+plugin.beanshellsidekick.BeanShellSidekickPlugin.version=0.1
+plugin.sidekick.java.JavaSideKickPlugin.depend.0=jdk 1.7.0
+plugin.sidekick.java.JavaSideKickPlugin.depend.1=jedit 05.00.99.00
+plugin.sidekick.java.JavaSideKickPlugin.depend.2=plugin errorlist.ErrorListPlugin 2.1
+plugin.sidekick.java.JavaSideKickPlugin.depend.3=plugin sidekick.SideKickPlugin 1.7
+
+
+plugin.sidekick.beanshell.BeanShellSideKickPlugin.menu=sidekick-tree
+sidekick.parser.beanshell.label=beanshell
+mode.beanshell.sidekick.parser=beanshell

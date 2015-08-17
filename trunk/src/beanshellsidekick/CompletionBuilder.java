@@ -193,7 +193,7 @@ this.callstack - An array of bsh.NameSpace references representing the "call sta
 
 
     private static String buildMethodCompletion(Method method) {
-        String suffix = method.getParameterCount() > 0 ? "(" : "()";
+        String suffix = method.getParameterTypes().length > 0 ? "(" : "()";
         return method.getName() + suffix;
     }
 

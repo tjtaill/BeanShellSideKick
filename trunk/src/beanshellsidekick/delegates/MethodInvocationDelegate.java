@@ -35,12 +35,17 @@ public class MethodInvocationDelegate extends SimpleNodeDelegate {
         } catch (Exception e) {
             // crap did not find anything probably one of the argument need to be super type
             for( Method m : target.getMethods() ) {
-                if ( m.getName().equals(methodName) ) {
+                if ( foundSimilarMethod(m, methodName, argTypes) ) {
                     method = m;
                     break; // found it
                 }
             }
         }
         return method.getReturnType().getName();
+    }
+
+    private boolean foundSimilarMethod(Method m, String methodName, Class[] argTypes) {
+        // if they have same number of arguments and the same name
+        return argTypes.length == m.getParameterTypes().length &&  m.getName().equals(methodName);
     }
 }

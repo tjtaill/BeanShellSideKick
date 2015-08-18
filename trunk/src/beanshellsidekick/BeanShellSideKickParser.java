@@ -204,12 +204,18 @@ public class BeanShellSideKickParser extends SideKickParser {
         if ( caret <= 0 )
             return "";
 
-            int pos = caret;
+        int pos = caret;
         char c = textArea.getText(--pos, 1).charAt(0);
         StringBuilder identifier = new StringBuilder();
+        boolean isFirstChar = true;
         while ( Character.isJavaIdentifierPart(c) || c == '.' ) {
-            if ( c !=  '.' )
-                identifier.insert(0, c);
+            if ( isFirstChar && c == '.' ) {
+                isFirstChar = false;
+                c = textArea.getText(--pos, 1).charAt(0);
+                continue;
+            }
+            isFirstChar = false;
+            identifier.insert(0, c);
             c = textArea.getText(--pos, 1).charAt(0);
         }
         return identifier.toString();

@@ -43,6 +43,23 @@ public class CompletionBuilder {
             put("scriptPath", Class.forName("java.lang.String"));
             put("$_", Class.forName("java.lang.String"));
             put("$_e", Class.forName("java.lang.Exception"));
+            put("bsh.args", Array.newInstance(String.class, 1).getClass() );
+            put("bsh.cwd", String.class);
+            put("bsh.show", boolean.class);
+            put("bsh.interactive", boolean.class);
+            put("bsh.evalOnly", boolean.class);
+            put("this.variables", Array.newInstance(String.class, 1).getClass() );
+            put("this.methods", Array.newInstance(String.class, 1).getClass() );
+
+                   /*
+bsh.shared - A special static space which is shared across all interpreter instances. Normally each bsh.Interpreter instance is entirely independent; having its own unique global namespace and settings. bsh.shared is implemented as a static namespace in the bsh.Interpreter class. It was added primarily to support communication among instances for the GUI desktop.
+bsh.console - If BeanShell is running in its GUI desktop mode, this variable holds a reference to the current interpreter's console, if it has one.
+bsh.appletcontext - If BeanShell is running inside an Applet, the current applet context, if one exists.
+this.interpreter - A bsh.Interpreter reference to the currently executing BeanShell Interpreter object.
+this.namespace - A bsh.NameSpace reference to the BeanShell NameSpace object of the current method context. See "Advanced Topics".
+this.caller - A bsh.This reference to the calling BeanShell method context. See "Variables and Scope Modifiers".
+this.callstack - An array of bsh.NameSpace references representing the "call stack" up to the current method context. See "Advanced Topics".
+         */
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -52,25 +69,27 @@ public class CompletionBuilder {
     private Map<String, List<String>> completionCache = new HashMap<String, List<String>>() {{
         try {
             put("jEdit", buildStaticCompletions(Class.forName("org.gjt.sp.jedit.jEdit")));
+            put("bsh", new ArrayList<String>() {{
+                add("appletcontext");
+                add("args");
+                add("console");
+                add("cwd");
+                add("evalOnly");
+                add("interactive");
+                add("show");
+                add("shared");
+            }} );
+            put("this", new ArrayList<String>() {{
+                add("caller");
+                add("callstack");
+                add("interpreter");
+                add("interpreter");
+                add("variables");
+
+            }} );
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        /*
-        bsh.args - An array of Strings passed as command line arguments to the BeanShell interpreter.
-bsh.shared - A special static space which is shared across all interpreter instances. Normally each bsh.Interpreter instance is entirely independent; having its own unique global namespace and settings. bsh.shared is implemented as a static namespace in the bsh.Interpreter class. It was added primarily to support communication among instances for the GUI desktop.
-bsh.console - If BeanShell is running in its GUI desktop mode, this variable holds a reference to the current interpreter's console, if it has one.
-bsh.appletcontext - If BeanShell is running inside an Applet, the current applet context, if one exists.
-bsh.cwd - A String representing the current working directory of the BeanShell interpreter. This is used or manipulated by the cd(), dir(), pwd(), and pathToFile() commands.
-bsh.show - A boolean value used by the show() command. It indicates whether results are always printed, for interactive use.
-bsh.interactive - A boolean indicating whether this interpreter running in an interactive mode
-bsh.evalOnly - A boolean indicating whether this interpreter has an input stream or whether is it only serving as an engine for eval() operations (e.g. for embedded use).
-this.variables - An array of Strings listing the variables defined in the current method context (namespace).
-this.methods - An array of Strings listing the methods defined the current method context (namespace).
-this.interpreter - A bsh.Interpreter reference to the currently executing BeanShell Interpreter object.
-this.namespace - A bsh.NameSpace reference to the BeanShell NameSpace object of the current method context. See "Advanced Topics".
-this.caller - A bsh.This reference to the calling BeanShell method context. See "Variables and Scope Modifiers".
-this.callstack - An array of bsh.NameSpace references representing the "call stack" up to the current method context. See "Advanced Topics".
-         */
     }};
 
     public void addImport(String imp) {
@@ -90,15 +109,6 @@ this.callstack - An array of bsh.NameSpace references representing the "call sta
             imports.add(imp);
         }
 
-    }
-
-    private boolean isPrimitive(String type) {
-        try {
-            Class c = Class.forName(type);
-            return c.isPrimitive();
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     private Class primitiveType(String type) {

@@ -2,13 +2,14 @@ package beanshellsidekick;
 
 import org.gjt.sp.jedit.EditPane;
 import org.gjt.sp.jedit.View;
+import org.gjt.sp.jedit.buffer.JEditBuffer;
+import org.gjt.sp.jedit.textarea.Selection;
 import sidekick.SideKickActions;
 import sidekick.SideKickCompletion;
 import sidekick.SideKickCompletionPopup;
 
 import javax.swing.*;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class BeanShellCompletion extends SideKickCompletion {
     private SideKickCompletionPopup completionPopup;
@@ -50,6 +51,28 @@ public class BeanShellCompletion extends SideKickCompletion {
             // don't bother handling backspace yet just clear and start over
             typedChars.setLength(0);
             return true;
+        }
+    }
+
+    public void insert(int index)
+    {
+        String selected = String.valueOf(get(index));
+        String[] parts = selected.split("\\s", 2);
+        selected = parts[0];
+        int caret = textArea.getCaretPosition();
+        Selection s = textArea.getSelectionAtOffset(caret);
+        int start = (s == null ? caret : s.getStart());
+        int end = (s == null ? caret : s.getEnd());
+        JEditBuffer buffer = textArea.getBuffer();
+        try
+        {
+            buffer.beginCompoundEdit();
+            buffer.remove(start - text.length(),text.length());
+            buffer.insert(start - text.length(),selected);
+        }
+        finally
+        {
+            buffer.endCompoundEdit();
         }
     }
 

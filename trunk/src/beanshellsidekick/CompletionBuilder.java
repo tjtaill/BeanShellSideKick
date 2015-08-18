@@ -93,7 +93,7 @@ this.callstack - An array of bsh.NameSpace references representing the "call sta
     }};
 
     public void addImport(String imp) {
-        // TODO : hanlde static imports
+        // TODO : handle static imports
         String[] parts = imp.split("\\.");
         String lastPart = parts[parts.length - 1];
         if (lastPart.equals("*")) { // wildcard import
@@ -194,7 +194,7 @@ this.callstack - An array of bsh.NameSpace references representing the "call sta
         }
 
         for (Field field : type.getFields()) {
-            uniqueCompletions.add(field.getName());
+            uniqueCompletions.add(buildFieldCompletion(field));
         }
         ArrayList<String> completions = new ArrayList<>(uniqueCompletions);
         Collections.sort(completions);
@@ -203,8 +203,26 @@ this.callstack - An array of bsh.NameSpace references representing the "call sta
 
 
     private static String buildMethodCompletion(Method method) {
-        String suffix = method.getParameterTypes().length > 0 ? "(" : "()";
-        return method.getName() + suffix;
+        StringBuilder methodCompletion = new StringBuilder();
+        methodCompletion.append( method.getName() );
+        methodCompletion.append( "(" );
+        Class[] params = method.getParameterTypes();
+        for(int i = 0; i < params.length; i++) {
+            methodCompletion.append(' ');
+            methodCompletion.append( params[i].getSimpleName() );
+            if ( i != params.length -1 ) {
+                methodCompletion.append(',');
+            } else {
+                methodCompletion.append(' ');
+            }
+        }
+        methodCompletion.append( ") : " );
+        methodCompletion.append(method.getReturnType().getSimpleName());
+        return methodCompletion.toString();
+    }
+
+    private static String buildFieldCompletion(Field field) {
+        return field.getName() + " : " + field.getType().getSimpleName();
     }
 
     private static List<String> buildStaticCompletions(Class<?> type) {
@@ -216,7 +234,7 @@ this.callstack - An array of bsh.NameSpace references representing the "call sta
 
         for (Field field : type.getFields()) {
             if (Modifier.isStatic(field.getModifiers()))
-                uniqueCompletions.add(field.getName());
+                uniqueCompletions.add(buildFieldCompletion(field));
         }
         ArrayList<String> completions = new ArrayList<>(uniqueCompletions);
         Collections.sort(completions);

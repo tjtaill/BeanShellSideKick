@@ -19,7 +19,7 @@
     <!-- jEdit installation properties. -->
     <!-- mark:properties -->
     <property name="build.support" value=".."/>
-    <property name="install.dir" value="C:\Users\troy\AppData\Roaming\jEdit\jars"/>
+    <property name="install.dir" value="C:\Users\ttaillefer\AppData\Roaming\jEdit\jars"/>
     <property name="jedit.install.dir" value="C:\Program Files\jEdit"/>
     <property name="jedit.plugins.dir" value="${install.dir}"/>
     <!-- /mark:properties -->

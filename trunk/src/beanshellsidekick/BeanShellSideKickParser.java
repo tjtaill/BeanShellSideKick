@@ -5,10 +5,11 @@ import beanshellsidekick.delegates.AssignmentDelegate;
 import beanshellsidekick.delegates.SimpleNodeDelegate;
 import beanshellsidekick.delegates.TypedVariableDeclarationDelegate;
 import org.gjt.sp.jedit.Buffer;
+import org.gjt.sp.jedit.View;
 import errorlist.*;
 
 import java.io.StringReader;
-import java.lang.reflect.Method;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import org.gjt.sp.jedit.bsh.ParseException;
 import org.gjt.sp.jedit.bsh.Parser;
 import org.gjt.sp.jedit.textarea.JEditTextArea;
 import sidekick.SideKickCompletion;
+import sidekick.SideKickCompletionPopup;
 import sidekick.SideKickParsedData;
 import sidekick.SideKickParser;
 import sidekick.enhanced.*;
@@ -35,6 +37,9 @@ public class BeanShellSideKickParser extends SideKickParser {
     private static final Pattern POSITION_PATTERN = Pattern.compile("(\\d+).*?(\\d+)");
 
     private boolean firstVariable;
+
+    private SideKickCompletionPopup lastCompletionPopup;
+    private BeanShellCompletion lastCompletion;
 
 
     public BeanShellSideKickParser() {
@@ -168,6 +173,15 @@ public class BeanShellSideKickParser extends SideKickParser {
         return ".";
     }
 
+    public SideKickCompletionPopup getCompletionPopup(View view,
+                                                      int caretPosition, SideKickCompletion complete, boolean active)
+    {
+        lastCompletionPopup = new SideKickCompletionPopup(view, this, caretPosition,
+                complete, active);
+        lastCompletion.setCompletionPopup( lastCompletionPopup );
+        return lastCompletionPopup;
+    }
+
     @Override
     public SideKickCompletion complete(EditPane editPane, int caret) {
 
@@ -182,7 +196,8 @@ public class BeanShellSideKickParser extends SideKickParser {
             String identifier = getIdentifierBeforeDot(textArea, caret);
             completions = completionBuilder.build(identifier);
         }
-        return new BeanShellCompletion(editPane.getView(),"", completions);
+        lastCompletion = new BeanShellCompletion(editPane.getView(),"", completions);
+        return lastCompletion;
     }
 
     private void addVariable(Buffer buffer, String nodeText, BeanShellSideKickParsedData data, int line) {

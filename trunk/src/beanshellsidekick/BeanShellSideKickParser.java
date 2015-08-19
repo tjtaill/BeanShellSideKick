@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.*;
 import javax.swing.text.Position;
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -179,6 +180,11 @@ public class BeanShellSideKickParser extends SideKickParser {
         lastCompletionPopup = new SideKickCompletionPopup(view, this, caretPosition,
                 complete, active);
         lastCompletion.setCompletionPopup( lastCompletionPopup );
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                lastCompletionPopup.setSelectedIndex(0);
+            }
+        });
         return lastCompletionPopup;
     }
 
